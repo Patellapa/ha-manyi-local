@@ -74,8 +74,12 @@ def test_cancelled_scan_releases_port(monkeypatch):
         loop = asyncio.get_running_loop()
         started = asyncio.Event()
         ports = []
+        clients = []
         async def send(sock, data, target):
             ports.append(int(data.decode().split(":")[-1].rstrip(";")))
+            reader, writer = await asyncio.open_connection("127.0.0.1", ports[-1])
+            clients.append((reader, writer))
+            await read_frame(reader)  # Cancel while identity is awaiting heartbeat reply.
             started.set()
             return len(data)
         monkeypatch.setattr(loop, "sock_sendto", send)
@@ -85,4 +89,8 @@ def test_cancelled_scan_releases_port(monkeypatch):
         with pytest.raises(asyncio.CancelledError):
             await task
         await check_port(ports[0])
+        for reader, writer in clients:
+            assert await asyncio.wait_for(reader.read(), 1) == b""
+            writer.close()
+            await writer.wait_closed()
     asyncio.run(run())

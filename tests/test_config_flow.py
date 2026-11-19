@@ -106,7 +106,7 @@ def test_startup_busy_port_is_actionable_and_retries(monkeypatch):
         monkeypatch.setattr(manyi_local, "ManyiHub", lambda data: hub)
         notify = Mock()
         monkeypatch.setattr(persistent_notification, "async_create", notify)
-        hass = SimpleNamespace(data={})
+        hass = SimpleNamespace(data={}, config=SimpleNamespace(language="it"))
         entry = SimpleNamespace(entry_id="test", data=dict(SETTINGS))
         with pytest.raises(ConfigEntryNotReady) as caught:
             await manyi_local.async_setup_entry(hass, entry)

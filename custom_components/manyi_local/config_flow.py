@@ -61,7 +61,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     async def async_step_auto(self, user_input=None):
         errors = {}
         if not self._adapters:
-            adapters = await network.async_get_adapters(self.hass)
+            try:
+                adapters = await network.async_get_adapters(self.hass)
+            except OSError:
+                return self.async_show_menu(step_id="no_interfaces", menu_options=["manual"])
             for adapter in adapters:
                 if not adapter.get("enabled", True):
                     continue
@@ -118,7 +121,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             )
         except OSError as exc:
             self._scan_error = "port_in_use" if exc.errno in (errno.EADDRINUSE, 10048) else "cannot_scan"
-        except (ValueError, TimeoutError):
+        except ValueError:
             self._scan_error = "cannot_scan"
 
     async def async_step_scanning(self, user_input=None):

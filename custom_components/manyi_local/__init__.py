@@ -27,15 +27,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         key = "port_in_use" if exc.errno in (errno.EADDRINUSE, 10048) else "cannot_listen"
         port = str(entry.data["tcp_port"])
         if key == "port_in_use":
-            persistent_notification.async_create(
-                hass,
+            italian = getattr(getattr(hass, "config", None), "language", "en") == "it"
+            message = (
                 f"La porta TCP {port} è già utilizzata. Disabilita il servizio in conflitto "
                 "(ad esempio EyeBond Local), oppure apri Impostazioni → Dispositivi e servizi "
                 "→ MANYi Local → Riconfigura e scegli una porta libera. "
-                "MANYi Local riproverà automaticamente. / "
-                f"TCP port {port} is already in use. Stop the conflicting service or "
-                "reconfigure MANYi Local with a free port. Setup will retry automatically.",
-                title="MANYi Local: porta TCP / TCP port",
+                "MANYi Local riproverà automaticamente."
+                if italian else
+                f"TCP port {port} is already in use. Stop the conflicting service "
+                "(for example EyeBond Local), or open Settings → Devices & services "
+                "→ MANYi Local → Reconfigure and choose a free port. "
+                "MANYi Local will retry automatically."
+            )
+            persistent_notification.async_create(
+                hass, message,
+                title="MANYi Local: porta TCP occupata" if italian else "MANYi Local: TCP port in use",
                 notification_id=f"{DOMAIN}_{entry.entry_id}_listener",
             )
         raise ConfigEntryNotReady(
