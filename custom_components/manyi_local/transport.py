@@ -176,7 +176,8 @@ class CollectorSession:
             if not future.done():
                 future.cancel()
 
-    async def identify(self) -> str:
+    async def read_identity(self) -> str:
+        """Read the logger identity for onboarding without assuming its PN."""
         async with self.lock:
             if self.config.wire_mode == "framed":
                 if self.heartbeat_task is None:
@@ -198,9 +199,15 @@ class CollectorSession:
                     pn = match[1].decode()
                 finally:
                     self.at_future = None
-            if pn != self.config.pn:
-                raise ProtocolError("collector_pn_mismatch")
+            if not re.fullmatch(r"[A-Z]\d{13,17}", pn):
+                raise ProtocolError("invalid_collector_pn")
             return pn
+
+    async def identify(self) -> str:
+        pn = await self.read_identity()
+        if pn != self.config.pn:
+            raise ProtocolError("collector_pn_mismatch")
+        return pn
 
     async def read_holding(self, start: int, count: int) -> list[int]:
         request = read_request(self.config.slave_id, start, count)

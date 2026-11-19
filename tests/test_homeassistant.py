@@ -61,6 +61,8 @@ def test_sensor_platform_creates_entities_with_sensor_units():
 
 
 def test_failed_platform_setup_stops_listener_and_clears_entry(monkeypatch):
+    from homeassistant.components import persistent_notification
+    monkeypatch.setattr(persistent_notification, "async_dismiss", lambda *args: None)
     async def run():
         hub = SimpleNamespace(async_start=AsyncMock(), async_stop=AsyncMock())
         monkeypatch.setattr(manyi_local, "ManyiHub", lambda data: hub)

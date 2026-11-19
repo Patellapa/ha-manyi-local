@@ -1,0 +1,194 @@
+{
+  "entity": {
+    "sensor": {
+      "output_voltage": {
+        "name": "Inverter output voltage"
+      },
+      "inverter_current": {
+        "name": "Inverter current"
+      },
+      "load_current": {
+        "name": "Load current"
+      },
+      "ac_output_power": {
+        "name": "Load power"
+      },
+      "inverter_temperature": {
+        "name": "Inverter AC heatsink temperature"
+      },
+      "mppt1_radiator_temperature": {
+        "name": "MPPT 1 heatsink temperature"
+      },
+      "mppt1_pv_voltage": {
+        "name": "MPPT 1 PV voltage"
+      },
+      "mppt1_charger_current": {
+        "name": "MPPT 1 charging current"
+      },
+      "mppt1_charger_power": {
+        "name": "MPPT 1 measured power"
+      },
+      "mppt1_estimated_output_power": {
+        "name": "MPPT 1 estimated charger output"
+      },
+      "mppt2_radiator_temperature": {
+        "name": "MPPT 2 heatsink temperature"
+      },
+      "mppt2_pv_voltage": {
+        "name": "MPPT 2 PV voltage"
+      },
+      "mppt2_charger_current": {
+        "name": "MPPT 2 charging current"
+      },
+      "mppt2_charger_power": {
+        "name": "MPPT 2 measured power"
+      },
+      "mppt2_estimated_output_power": {
+        "name": "MPPT 2 estimated charger output"
+      },
+      "bms_battery_voltage": {
+        "name": "Battery voltage from BMS"
+      },
+      "bms_battery_current": {
+        "name": "Battery current from BMS"
+      },
+      "inverter_battery_power": {
+        "name": "Battery power from inverter"
+      },
+      "inverter_battery_voltage": {
+        "name": "Battery voltage from inverter"
+      },
+      "inverter_battery_current": {
+        "name": "Battery current from inverter"
+      },
+      "bms_soc": {
+        "name": "SOC from BMS"
+      },
+      "bms_soh": {
+        "name": "SOH from BMS"
+      },
+      "bms_calculated_power": {
+        "name": "Calculated BMS power (V × A)"
+      }
+    }
+  },
+  "config": {
+    "step": {
+      "inverter": {
+        "title": "Logger {inverter_number} of {inverter_count}",
+        "description": "Enter this inverter logger's network address and printed PN. Keep the default protocol unless you have confirmed a different mode.",
+        "data": {
+          "name": "Inverter name",
+          "ip": "Logger IPv4 address",
+          "pn": "Logger PN",
+          "wire_mode": "Logger protocol",
+          "slave_id": "Modbus slave ID"
+        },
+        "data_description": {
+          "wire_mode": "framed is the default; choose another mode only when confirmed for this logger."
+        }
+      },
+      "manual": {
+        "title": "MANYi Local",
+        "description": "Home Assistant must be reachable by the inverter loggers at the advertised LAN address and TCP port.",
+        "data": {
+          "advertised_ip": "Home Assistant LAN address reachable by the loggers",
+          "tcp_port": "TCP callback port",
+          "udp_port": "Logger UDP port",
+          "poll_seconds": "Polling interval (seconds)",
+          "inverter_count": "Number of inverters (up to 3)"
+        }
+      },
+      "user": {
+        "title": "MANYi Local",
+        "description": "Choose how to add your inverters.",
+        "menu_options": {
+          "auto": "Search automatically (recommended)",
+          "manual": "Manual configuration"
+        }
+      },
+      "auto": {
+        "title": "Find inverters",
+        "description": "Confirm the Home Assistant network and start searching. Keep the default ports and interval unless needed. Logger IPs and PNs are detected automatically. If nothing is found, try a deep scan.",
+        "data": {
+          "advertised_ip": "Home Assistant network",
+          "tcp_port": "TCP callback port",
+          "udp_port": "Logger UDP port",
+          "poll_seconds": "Polling interval (seconds)",
+          "deep_scan": "Deep scan (slower, maximum 1024 addresses)"
+        }
+      },
+      "scanning": {
+        "title": "Searching"
+      },
+      "scan_results": {
+        "title": "Discovered inverters",
+        "description": "Select one to three loggers. Their IPs and PNs have been verified.",
+        "data": {
+          "devices": "Loggers to add"
+        }
+      },
+      "not_found": {
+        "title": "No loggers found",
+        "description": "Check that the loggers are powered on and on the same network. Retry with deep scan or configure manually.",
+        "menu_options": {
+          "auto": "Retry search",
+          "manual": "Manual configuration"
+        }
+      },
+      "no_interfaces": {
+        "title": "No network detected",
+        "description": "No usable IPv4 network was detected. You can enter the settings manually.",
+        "menu_options": {
+          "manual": "Manual configuration"
+        }
+      },
+      "reconfigure": {
+        "title": "Connection settings",
+        "description": "Change network settings or ports while keeping your configured inverters. The loggers must be able to reach the chosen TCP port.",
+        "data": {
+          "advertised_ip": "Home Assistant LAN address reachable by the loggers",
+          "tcp_port": "TCP callback port",
+          "udp_port": "Logger UDP port",
+          "poll_seconds": "Polling interval (seconds)"
+        }
+      },
+      "names": {
+        "title": "Inverter names",
+        "description": "Name each selected inverter.",
+        "data": {
+          "name_0": "Inverter 1 name",
+          "name_1": "Inverter 2 name",
+          "name_2": "Inverter 3 name"
+        }
+      }
+    },
+    "error": {
+      "invalid_ip": "Enter a valid IPv4 address.",
+      "invalid_pn": "Enter the logger PN in the format shown on its label.",
+      "duplicate_ip": "This logger IP is already configured.",
+      "duplicate_pn": "This logger PN is already configured.",
+      "port_in_use": "The TCP port is already in use. Stop EyeBond Local or other services using it, or choose a free port (for example 8900).",
+      "cannot_listen": "Unable to open the TCP port. Check permissions and network settings.",
+      "cannot_scan": "Search failed. Check the selected network and retry, or use manual configuration.",
+      "network_too_large": "This network is too large for deep scan. Use normal search or manual configuration.",
+      "select_devices": "Select one to three loggers.",
+      "invalid_name": "Enter a non-empty name."
+    },
+    "abort": {
+      "already_configured": "These inverter loggers are already configured.",
+      "reconfigure_successful": "Configuration updated."
+    },
+    "progress": {
+      "scanning_network": "Searching for and identifying loggers on the local network…"
+    }
+  },
+  "exceptions": {
+    "port_in_use": {
+      "message": "TCP port {port} is in use. Stop the conflicting service or use Reconfigure to choose a free port."
+    },
+    "cannot_listen": {
+      "message": "Unable to open TCP port {port}. Check network settings and permissions. Setup will retry automatically."
+    }
+  }
+}
