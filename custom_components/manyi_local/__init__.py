@@ -66,8 +66,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     if not await hass.config_entries.async_unload_platforms(entry, (Platform.SENSOR,)):
         return False
-    hub: ManyiHub = hass.data[DOMAIN].pop(entry.entry_id)
+    hub: ManyiHub = hass.data[DOMAIN][entry.entry_id]
     await hub.async_stop()
+    hass.data[DOMAIN].pop(entry.entry_id)
     if not hass.data[DOMAIN]:
         hass.data.pop(DOMAIN)
     return True

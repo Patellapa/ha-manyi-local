@@ -6,7 +6,7 @@ import socket
 
 from .hub import CollectorConfig
 from .protocol import ProtocolError
-from .transport import CollectorSession
+from .transport import CollectorSession, close_writer
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,11 +52,7 @@ async def discover(advertised_ip, network_cidr, tcp_port, udp_port, *, deep=Fals
         finally:
             if session is not None:
                 await session.close()
-            writer.close()
-            try:
-                await writer.wait_closed()
-            except OSError:
-                pass
+            await close_writer(writer)
             if admitted:
                 active.discard(ip)
             tasks.discard(task)
@@ -84,8 +80,10 @@ async def discover(advertised_ip, network_cidr, tcp_port, udp_port, *, deep=Fals
     finally:
         stopping = True
         server.close()
-        await server.wait_closed()
+        if hasattr(server, "close_clients"):
+            server.close_clients()
         for task in tuple(tasks):
             task.cancel()
         await asyncio.gather(*tuple(tasks), return_exceptions=True)
+        await server.wait_closed()
     return sorted(results.values(), key=lambda item: (item["ip"], item["pn"]))

@@ -102,7 +102,7 @@ not change entity identifiers or inverter PNs.
 
 ## Updating from 0.1.0
 
-Update through HACS and restart Home Assistant. Existing configurations keep
+Update through Marketplace (or HACS on older Home Assistant versions) and restart Home Assistant. Existing configurations keep
 working without migration. Automatic discovery is available when adding a new
 configuration; an existing entry can use **Reconfigure** for connection settings.
 To try discovery on an existing installation, record your current settings,
@@ -115,3 +115,10 @@ sources: `collector/discovery.py`, `collector/profile.py`, and
 `onboarding/eybond.py` from https://github.com/groove-max/ha-eybond-local
 (MPL-2.0). MANYi discovery is an independent implementation built on this
 integration's existing protocol/session code; upstream files are not bundled.
+
+## Removal and reload
+
+Version 0.2.1 fixes a shutdown deadlock affecting removal/reload with connected
+loggers, including unresponsive loggers. Update and restart Home Assistant to
+load the fix before retrying removal. A polling timeout alone is a separate
+connection problem; shutdown no longer waits for the logger to finish polling.

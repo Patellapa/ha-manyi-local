@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.1
+
+- Fix integration removal and reload hanging while a logger remains connected.
+- Close callback transports and cancel polling/identity tasks before waiting for server shutdown.
+- Apply the same shutdown ordering to discovery cancellation.
+- Bound stream closure and join reader/heartbeat tasks even after remote disconnects.
+- Keep the hub registered until unload has completed.
+- Add regressions using connected silent loggers during identity and polling.
+
 ## 0.2.0
 
 - Automatic LAN discovery with TCP identity verification, logger selection and custom inverter names.

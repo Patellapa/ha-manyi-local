@@ -10,6 +10,17 @@ from .protocol import ProtocolError, frame, heartbeat, read_frame, read_request,
 _LOGGER = logging.getLogger(__name__)
 
 
+async def close_writer(writer, timeout=1):
+    """Bound stream shutdown so a stalled peer cannot block unload."""
+    writer.close()
+    try:
+        await asyncio.wait_for(writer.wait_closed(), timeout)
+    except (OSError, TimeoutError):
+        transport = getattr(writer, "transport", None)
+        if transport is not None:
+            transport.abort()
+
+
 class CollectorSession:
     def __init__(self, reader, writer, config, timeout: float) -> None:
         self.reader = reader
@@ -27,21 +38,15 @@ class CollectorSession:
         self.reader_task = asyncio.create_task(self._reader())
 
     async def close(self) -> None:
-        if self.closed:
-            return
+        # Reader EOF already marks the session closed; still join its tasks.
         self.closed = True
         self.writer.close()
-        try:
-            await self.writer.wait_closed()
-        except (ConnectionError, OSError):
-            pass
-        for task in (self.reader_task, self.heartbeat_task):
-            if task is not None and asyncio.current_task() != task:
-                task.cancel()
-                try:
-                    await task
-                except asyncio.CancelledError:
-                    pass
+        tasks = [task for task in (self.reader_task, self.heartbeat_task)
+                 if task is not None and task is not asyncio.current_task()]
+        for task in tasks:
+            task.cancel()
+        await asyncio.gather(*tasks, return_exceptions=True)
+        await close_writer(self.writer, min(self.timeout, 1))
 
     async def _send_heartbeat(self, wait_for_reply: bool = False) -> None:
         self.tid = self.tid % 65535 + 1

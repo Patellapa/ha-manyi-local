@@ -18,7 +18,7 @@ from .const import (
     DEFAULT_TIMEOUT_SECONDS,
 )
 from .protocol import ModbusException, ProtocolError
-from .transport import CollectorSession, request_callback
+from .transport import CollectorSession, close_writer, request_callback
 
 _LOGGER = logging.getLogger(__name__)
 _RETRY_SECONDS = 30
@@ -62,8 +62,10 @@ class ManyiHub:
         self._connection_tasks = set()
         self._callback_tasks = []
         self._server = None
+        self._stopping = False
 
     async def async_start(self) -> None:
+        self._stopping = False
         self._server = await asyncio.start_server(self._accept, "0.0.0.0", self.tcp_port)
         self._callback_tasks = [
             asyncio.create_task(self._request_callback_loop(config))
@@ -72,19 +74,29 @@ class ManyiHub:
         _LOGGER.info("MANYi callback listener started on TCP port %s", self.tcp_port)
 
     async def async_stop(self) -> None:
-        if self._server is not None:
-            self._server.close()
-            await self._server.wait_closed()
-        for task in self._callback_tasks:
+        """Close clients before waiting for the TCP server to finish shutdown."""
+        self._stopping = True
+        server = self._server
+        if server is not None:
+            server.close()
+            # Also cover accepted transports whose callback task has not run yet.
+            if hasattr(server, "close_clients"):
+                server.close_clients()
+        tasks = tuple(self._callback_tasks) + tuple(self._connection_tasks)
+        for task in tasks:
             task.cancel()
-        await asyncio.gather(*self._callback_tasks, return_exceptions=True)
-        for session in tuple(self._sessions.values()):
-            await session.close()
-        for task in tuple(self._connection_tasks):
-            task.cancel()
-        await asyncio.gather(*self._connection_tasks, return_exceptions=True)
+        await asyncio.gather(*tasks, return_exceptions=True)
+        await asyncio.gather(*(session.close() for session in tuple(self._sessions.values())),
+                             return_exceptions=True)
+        if server is not None:
+            await server.wait_closed()
+        self._server = None
         self._callback_tasks.clear()
+        self._connection_tasks.clear()
         self._sessions.clear()
+        self._admitting.clear()
+        for state in self.states.values():
+            state["connected"] = False
 
     def async_add_listener(self, ip: str, callback):
         self._listeners[ip].add(callback)
@@ -124,16 +136,17 @@ class ManyiHub:
         ip = peer[0] if peer else None
         config = self.configs.get(ip)
         session = None
-        if config is None or ip in self._admitting or (
+        if self._stopping or config is None or ip in self._admitting or (
             ip in self._sessions and not self._sessions[ip].closed
         ):
             _LOGGER.debug(
                 "Rejecting TCP callback from %s: unknown IP or existing session", ip
             )
-            writer.close()
-            await writer.wait_closed()
-            if task is not None:
-                self._connection_tasks.discard(task)
+            try:
+                await close_writer(writer)
+            finally:
+                if task is not None:
+                    self._connection_tasks.discard(task)
             return
 
         self._admitting.add(ip)
@@ -166,18 +179,15 @@ class ManyiHub:
             ValueError,
             UnicodeError,
         ) as exc:
-            _LOGGER.warning(
+            log = _LOGGER.debug if self._stopping else _LOGGER.warning
+            log(
                 "Connection to %s (%s) ended during %s [%s]: %s",
                 config.name, ip, stage, type(exc).__name__, exc,
             )
         finally:
             if session is not None:
                 await session.close()
-            writer.close()
-            try:
-                await writer.wait_closed()
-            except (ConnectionError, OSError):
-                pass
+            await close_writer(writer)
             self._admitting.discard(ip)
             if ip in self._sessions and self._sessions[ip] is session:
                 self._sessions.pop(ip, None)
