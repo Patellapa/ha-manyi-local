@@ -47,7 +47,7 @@ async def discover(advertised_ip, network_cidr, tcp_port, udp_port, *, deep=Fals
                     return
                 results[pn] = {"ip": ip, "pn": pn, "name": f"Inverter {len(results) + 1}",
                                "wire_mode": "framed", "slave_id": 4}
-        except (OSError, TimeoutError, EOFError, ProtocolError, UnicodeError, ValueError) as exc:
+        except (OSError, EOFError, asyncio.LimitOverrunError, ProtocolError, UnicodeError, ValueError) as exc:
             _LOGGER.debug("Discovery identity failed for %s: %s", ip, exc)
         finally:
             if session is not None:
