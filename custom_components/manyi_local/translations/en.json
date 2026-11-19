@@ -1,0 +1,67 @@
+{
+  "entity": {
+    "sensor": {
+      "output_voltage": { "name": "Inverter output voltage" },
+      "inverter_current": { "name": "Inverter current" },
+      "load_current": { "name": "Load current" },
+      "ac_output_power": { "name": "Load power" },
+      "inverter_temperature": { "name": "Inverter AC heatsink temperature" },
+      "mppt1_radiator_temperature": { "name": "MPPT 1 heatsink temperature" },
+      "mppt1_pv_voltage": { "name": "MPPT 1 PV voltage" },
+      "mppt1_charger_current": { "name": "MPPT 1 charging current" },
+      "mppt1_charger_power": { "name": "MPPT 1 measured power" },
+      "mppt1_estimated_output_power": { "name": "MPPT 1 estimated charger output" },
+      "mppt2_radiator_temperature": { "name": "MPPT 2 heatsink temperature" },
+      "mppt2_pv_voltage": { "name": "MPPT 2 PV voltage" },
+      "mppt2_charger_current": { "name": "MPPT 2 charging current" },
+      "mppt2_charger_power": { "name": "MPPT 2 measured power" },
+      "mppt2_estimated_output_power": { "name": "MPPT 2 estimated charger output" },
+      "bms_battery_voltage": { "name": "Battery voltage from BMS" },
+      "bms_battery_current": { "name": "Battery current from BMS" },
+      "inverter_battery_power": { "name": "Battery power from inverter" },
+      "inverter_battery_voltage": { "name": "Battery voltage from inverter" },
+      "inverter_battery_current": { "name": "Battery current from inverter" },
+      "bms_soc": { "name": "SOC from BMS" },
+      "bms_soh": { "name": "SOH from BMS" },
+      "bms_calculated_power": { "name": "Calculated BMS power (V × A)" }
+    }
+  },
+  "config": {
+    "step": {
+      "user": {
+        "title": "MANYi Local",
+        "description": "Home Assistant must be reachable by the inverter loggers at the advertised LAN address and TCP port.",
+        "data": {
+          "advertised_ip": "Home Assistant LAN address reachable by the loggers",
+          "tcp_port": "TCP callback port",
+          "udp_port": "Logger UDP port",
+          "poll_seconds": "Polling interval (seconds)",
+          "inverter_count": "Number of inverters (up to 3)"
+        }
+      },
+      "inverter": {
+        "title": "Logger {inverter_number} of {inverter_count}",
+        "description": "Enter this inverter logger's network address and printed PN. Keep the default protocol unless you have confirmed a different mode.",
+        "data": {
+          "name": "Inverter name",
+          "ip": "Logger IPv4 address",
+          "pn": "Logger PN",
+          "wire_mode": "Logger protocol",
+          "slave_id": "Modbus slave ID"
+        },
+        "data_description": {
+          "wire_mode": "framed is the default; choose another mode only when confirmed for this logger."
+        }
+      }
+    },
+    "error": {
+      "invalid_ip": "Enter a valid IPv4 address.",
+      "invalid_pn": "Enter the logger PN in the format shown on its label.",
+      "duplicate_ip": "This logger IP is already configured.",
+      "duplicate_pn": "This logger PN is already configured."
+    },
+    "abort": {
+      "already_configured": "These inverter loggers are already configured."
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "entity": {
+    "sensor": {
+      "output_voltage": { "name": "Tensione inverter" },
+      "inverter_current": { "name": "Corrente inverter" },
+      "load_current": { "name": "Corrente carico" },
+      "ac_output_power": { "name": "Potenza carico" },
+      "inverter_temperature": { "name": "Temperatura radiatore AC inverter" },
+      "mppt1_radiator_temperature": { "name": "Temperatura radiatore MPPT 1" },
+      "mppt1_pv_voltage": { "name": "Tensione PV MPPT 1" },
+      "mppt1_charger_current": { "name": "Corrente di carica MPPT 1" },
+      "mppt1_charger_power": { "name": "Potenza letta MPPT 1" },
+      "mppt1_estimated_output_power": { "name": "Stima uscita caricatore MPPT 1" },
+      "mppt2_radiator_temperature": { "name": "Temperatura radiatore MPPT 2" },
+      "mppt2_pv_voltage": { "name": "Tensione PV MPPT 2" },
+      "mppt2_charger_current": { "name": "Corrente di carica MPPT 2" },
+      "mppt2_charger_power": { "name": "Potenza letta MPPT 2" },
+      "mppt2_estimated_output_power": { "name": "Stima uscita caricatore MPPT 2" },
+      "bms_battery_voltage": { "name": "Tensione batteria da BMS" },
+      "bms_battery_current": { "name": "Corrente batteria da BMS" },
+      "inverter_battery_power": { "name": "Potenza batteria da inverter" },
+      "inverter_battery_voltage": { "name": "Tensione batteria da inverter" },
+      "inverter_battery_current": { "name": "Corrente batteria da inverter" },
+      "bms_soc": { "name": "SOC da BMS" },
+      "bms_soh": { "name": "SOH da BMS" },
+      "bms_calculated_power": { "name": "Potenza calcolata BMS (V × A)" }
+    }
+  },
+  "config": {
+    "step": {
+      "user": {
+        "title": "MANYi Local",
+        "description": "Home Assistant deve essere raggiungibile dai datalogger all'indirizzo LAN e alla porta TCP indicati.",
+        "data": {
+          "advertised_ip": "Indirizzo LAN di Home Assistant raggiungibile dai logger",
+          "tcp_port": "Porta TCP callback",
+          "udp_port": "Porta UDP dei logger",
+          "poll_seconds": "Intervallo di acquisizione (secondi)",
+          "inverter_count": "Numero di inverter (massimo 3)"
+        }
+      },
+      "inverter": {
+        "title": "Logger {inverter_number} di {inverter_count}",
+        "description": "Inserisci l'indirizzo di rete e il PN stampato sul datalogger. Mantieni il protocollo predefinito se non hai verificato una modalità diversa.",
+        "data": {
+          "name": "Nome inverter",
+          "ip": "Indirizzo IPv4 del datalogger",
+          "pn": "PN del datalogger",
+          "wire_mode": "Protocollo del logger",
+          "slave_id": "ID slave Modbus"
+        },
+        "data_description": {
+          "wire_mode": "framed è la modalità predefinita; scegli un'altra modalità solo se verificata per questo logger."
+        }
+      }
+    },
+    "error": {
+      "invalid_ip": "Inserisci un indirizzo IPv4 valido.",
+      "invalid_pn": "Inserisci il PN del datalogger nel formato riportato sull'etichetta.",
+      "duplicate_ip": "Questo indirizzo IP è già configurato.",
+      "duplicate_pn": "Questo PN è già configurato."
+    },
+    "abort": {
+      "already_configured": "Questi datalogger sono già configurati."
+    }
+  }
+}

@@ -1,0 +1,19 @@
+DOMAIN = "manyi_local"
+DEFAULT_TCP_PORT = 8899
+DEFAULT_UDP_PORT = 58899
+DEFAULT_POLL_SECONDS = 15
+DEFAULT_TIMEOUT_SECONDS = 5
+MAX_INVERTERS = 3
+PLATFORMS = ("sensor",)
+
+CONF_ADVERTISED_IP = "advertised_ip"
+CONF_TCP_PORT = "tcp_port"
+CONF_UDP_PORT = "udp_port"
+CONF_POLL_SECONDS = "poll_seconds"
+CONF_INVERTERS = "inverters"
+
+CONF_NAME = "name"
+CONF_IP = "ip"
+CONF_PN = "pn"
+CONF_WIRE_MODE = "wire_mode"
+CONF_SLAVE_ID = "slave_id"
