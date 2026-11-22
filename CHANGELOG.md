@@ -1,14 +1,5 @@
 # Changelog
 
-## 0.2.3
-
-- Display inverter battery voltage with one decimal place (0.1 V), so 52.6 V is shown instead of 53 V.
-- Verify that register value 526 is preserved as 52.6 V and the sensor requests one decimal place.
-
-## 0.2.2
-
-- Add the integration logo.
-
 ## 0.2.1
 
 - Fix integration removal and reload hanging while a logger remains connected.

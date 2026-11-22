@@ -112,7 +112,6 @@ BATTERY_SENSORS = (
     ManyiSensorDescription(
         key="inverter_battery_voltage", value_key="inverter_battery_voltage",
         translation_key="inverter_battery_voltage",
-        suggested_display_precision=1,
         native_unit_of_measurement=UnitOfElectricPotential.VOLT,
         device_class=SensorDeviceClass.VOLTAGE, state_class=SensorStateClass.MEASUREMENT,
     ),

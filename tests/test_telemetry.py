@@ -66,7 +66,7 @@ class FakeSession:
             16207: 20,
             16208: 700,
             16209: 42,
-            25205: 526,
+            25205: 520,
             25206: 2300,
             25210: 123,
             25212: 40,
@@ -85,7 +85,6 @@ def test_read_values_preserves_sources_and_calculates_only_documented_estimates(
     values = asyncio.run(hub._read_values(FakeSession(), config))
 
     assert values["inverter_output_voltage"] == 230
-    assert values["inverter_battery_voltage"] == 52.6
     assert values["inverter_current"] == 12.3
     assert values["load_current"] == 4
     assert values["ac_output_power"] == 850
