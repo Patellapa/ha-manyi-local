@@ -41,7 +41,10 @@ def test_sensor_platform_creates_entities_with_sensor_units():
         hub = SimpleNamespace(states={
             config.ip: {
                 "connected": True,
-                "values": {"inverter_output_voltage": 230},
+                "values": {
+                    "inverter_output_voltage": 230,
+                    "inverter_battery_voltage": 52.6,
+                },
             }
         })
         hass = SimpleNamespace(data={DOMAIN: {entry.entry_id: hub}})
@@ -54,6 +57,12 @@ def test_sensor_platform_creates_entities_with_sensor_units():
         assert isinstance(voltage, ManyiSensor)
         assert voltage.native_unit_of_measurement == "V"
         assert voltage.native_value == 230
+        battery_voltage = next(
+            entity for entity in entities
+            if entity.entity_description.key == "inverter_battery_voltage"
+        )
+        assert battery_voltage.native_value == 52.6
+        assert battery_voltage.suggested_display_precision == 1
         for description in (*INVERTER_SENSORS, *MPPT_SENSORS, *BATTERY_SENSORS):
             assert isinstance(description, SensorEntityDescription)
 
