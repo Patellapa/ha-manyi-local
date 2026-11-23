@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.4
+
+- Keep the last complete measurements visible during dongle outages and reconnects; retain settings on failed refreshes.
+- Add a diagnostic dongle connection sensor and per-value freshness, last successful read time, and configuration read errors.
+- Detect reader disconnections during the polling wait, without waiting for the next cycle.
+- Put register codes before all sensor descriptions; calculated estimates identify their source registers.
+- Correct APL, the maximum solar charging current label, and vendor-selected protocol 8 without guessing its manufacturer.
+- Preserve entity unique IDs and explicit BMS invalidation when live BMS voltage is zero.
+- Document the freshness check required by downstream power-based SOC templates.
+
 ## 0.2.3
 
 - Expose 28 documented configuration registers and 10 system flags as read-only diagnostic sensors per inverter.

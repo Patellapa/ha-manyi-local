@@ -2,6 +2,7 @@
 
 import asyncio
 from dataclasses import dataclass
+from datetime import datetime, timezone
 import logging
 
 from .const import (
@@ -66,6 +67,8 @@ class ManyiHub:
         self._stopping = False
         self.settings_raw = {ip: {} for ip in self.configs}
         self._settings_due = {ip: {} for ip in self.configs}
+        self.value_updated = {ip: {} for ip in self.configs}
+        self.settings_errors = {ip: {} for ip in self.configs}
 
     async def async_start(self) -> None:
         self._stopping = False
@@ -162,20 +165,22 @@ class ManyiHub:
             session = CollectorSession(reader, writer, config, DEFAULT_TIMEOUT_SECONDS)
             await session.identify()
             self._sessions[ip] = session
-            self.settings_raw[ip].clear()
+            self.states[ip]["session_started"] = datetime.now(timezone.utc).isoformat()
             self.states[ip]["connected"] = True
             self._notify(ip)
             _LOGGER.info("Connected to %s", config.name)
             stage = "polling"
             while not session.closed:
                 values = await self._read_values(session, config)
-                self.states[ip] = {"connected": True, "values": values}
-                self._merge_settings(ip, values)
+                self._publish_values(ip, values)
+                self._merge_settings(ip, self.states[ip]["values"])
                 self._notify(ip)
                 await self._read_settings(session, config)
-                self._merge_settings(ip, values)
+                self._merge_settings(ip, self.states[ip]["values"])
                 self._notify(ip)
-                await asyncio.sleep(self.poll_seconds)
+                # Wake immediately if the reader detects a lost dongle, rather
+                # than reporting connected until the next polling deadline.
+                await asyncio.wait({session.reader_task}, timeout=self.poll_seconds)
         except asyncio.CancelledError:
             raise
         except (
@@ -204,6 +209,18 @@ class ManyiHub:
             if task is not None:
                 self._connection_tasks.discard(task)
 
+    def _publish_values(self, ip: str, values: dict) -> None:
+        """Commit a completed live read; a failed transport never erases it.
+
+        Explicit missing measurements (e.g. zero-voltage BMS) still invalidate
+        their values, rather than masking battery communication failures.
+        """
+        self.states[ip]["values"].update(values)
+        now = datetime.now(timezone.utc).isoformat()
+        for key, value in values.items():
+            if value is not None:
+                self.value_updated[ip][key] = now
+
     def _merge_settings(self, ip: str, values: dict) -> None:
         raw = self.settings_raw[ip]
         for setting in SETTINGS:
@@ -224,12 +241,20 @@ class ManyiHub:
             if due.get(address, 0) > now:
                 break
             due[address] = now + 300
-            self.settings_raw[ip][address] = None
+            self.settings_raw[ip].setdefault(address, None)
             try:
                 words = await self._read_words(session, config, address, 1)
                 if words is not None:
                     self.settings_raw[ip][address] = words[0]
-            except (OSError, TimeoutError, EOFError, ProtocolError):
+                    self.settings_errors[ip].pop(address, None)
+                    timestamp = datetime.now(timezone.utc).isoformat()
+                    for setting in SETTINGS:
+                        if setting.address == address:
+                            self.value_updated[ip][setting.key] = timestamp
+                else:
+                    self.settings_errors[ip][address] = "modbus_read_rejected"
+            except (OSError, TimeoutError, EOFError, ProtocolError) as exc:
+                self.settings_errors[ip][address] = str(exc) or type(exc).__name__
                 _LOGGER.debug("Optional setting %s unavailable for %s", address, config.name)
                 break
 

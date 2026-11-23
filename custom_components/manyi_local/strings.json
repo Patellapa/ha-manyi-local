@@ -2,187 +2,192 @@
   "entity": {
     "sensor": {
       "output_voltage": {
-        "name": "Inverter output voltage"
+        "name": "[25206] Inverter output voltage"
       },
       "inverter_current": {
-        "name": "Inverter current"
+        "name": "[25210] Inverter current"
       },
       "load_current": {
-        "name": "Load current"
+        "name": "[25212] Load current"
       },
       "ac_output_power": {
-        "name": "Load power"
+        "name": "[25215] Load power"
       },
       "inverter_temperature": {
-        "name": "Inverter AC heatsink temperature"
+        "name": "[25233] Inverter AC heatsink temperature"
       },
       "mppt1_radiator_temperature": {
-        "name": "MPPT 1 heatsink temperature"
+        "name": "[15209] MPPT 1 heatsink temperature"
       },
       "mppt1_pv_voltage": {
-        "name": "MPPT 1 PV voltage"
+        "name": "[15205] MPPT 1 PV voltage"
       },
       "mppt1_charger_current": {
-        "name": "MPPT 1 charging current"
+        "name": "[15207] MPPT 1 charging current"
       },
       "mppt1_charger_power": {
-        "name": "MPPT 1 measured power"
+        "name": "[15208] MPPT 1 measured power"
       },
       "mppt1_estimated_output_power": {
-        "name": "MPPT 1 estimated charger output"
+        "name": "[15206 × 15207] MPPT 1 estimated charger output"
       },
       "mppt2_radiator_temperature": {
-        "name": "MPPT 2 heatsink temperature"
+        "name": "[16209] MPPT 2 heatsink temperature"
       },
       "mppt2_pv_voltage": {
-        "name": "MPPT 2 PV voltage"
+        "name": "[16205] MPPT 2 PV voltage"
       },
       "mppt2_charger_current": {
-        "name": "MPPT 2 charging current"
+        "name": "[16207] MPPT 2 charging current"
       },
       "mppt2_charger_power": {
-        "name": "MPPT 2 measured power"
+        "name": "[16208] MPPT 2 measured power"
       },
       "mppt2_estimated_output_power": {
-        "name": "MPPT 2 estimated charger output"
+        "name": "[16206 × 16207] MPPT 2 estimated charger output"
       },
       "bms_battery_voltage": {
-        "name": "Battery voltage from BMS"
+        "name": "[109] Battery voltage from BMS"
       },
       "bms_battery_current": {
-        "name": "Battery current from BMS"
+        "name": "[110] Battery current from BMS"
       },
       "inverter_battery_power": {
-        "name": "Battery power from inverter"
+        "name": "[25273] Battery power from inverter"
       },
       "inverter_battery_voltage": {
-        "name": "Battery voltage from inverter"
+        "name": "[25205] Battery voltage from inverter"
       },
       "inverter_battery_current": {
-        "name": "Battery current from inverter"
+        "name": "[25274] Battery current from inverter"
       },
       "bms_soc": {
-        "name": "SOC from BMS"
+        "name": "[113] SOC from BMS"
       },
       "bms_soh": {
-        "name": "SOH from BMS"
+        "name": "[114] SOH from BMS"
       },
       "bms_calculated_power": {
-        "name": "Calculated BMS power (V × A)"
+        "name": "[109 × 110] Calculated BMS power (V × A)"
       },
       "setting_10101": {
-        "name": "PV charger enable code [10101]"
+        "name": "[10101] PV charger enable code"
       },
       "setting_10103": {
-        "name": "Float voltage [10103]"
+        "name": "[10103] Float voltage"
       },
       "setting_10104": {
-        "name": "Absorption voltage [10104]"
+        "name": "[10104] Absorption voltage"
       },
       "setting_10110": {
-        "name": "Battery type [10110]"
+        "name": "[10110] Battery type"
       },
       "setting_20101": {
-        "name": "Off-grid output enabled [20101]"
+        "name": "[20101] Off-grid output enabled"
       },
       "setting_20102": {
-        "name": "Output voltage setting [20102]"
+        "name": "[20102] Output voltage setting"
       },
       "setting_20103": {
-        "name": "Output frequency setting [20103]"
+        "name": "[20103] Output frequency setting"
       },
       "setting_20104": {
-        "name": "Power saver enabled [20104]"
+        "name": "[20104] Power saver enabled"
       },
       "setting_20108": {
-        "name": "Battery feed-in enabled [20108]"
+        "name": "[20108] Battery feed-in enabled"
       },
       "setting_20109": {
-        "name": "Output source priority [20109]"
+        "name": "[20109] Output source priority"
       },
       "setting_20111": {
-        "name": "Grid protection standard [20111]"
+        "name": "[20111] Grid protection standard"
       },
       "setting_20112": {
-        "name": "Solar use priority [20112]"
+        "name": "[20112] Solar use priority"
       },
       "setting_20114": {
-        "name": "Max inverter current (AC) [20114]"
+        "name": "[20114] Max inverter current (AC)"
       },
       "setting_20118": {
-        "name": "Stop discharging voltage [20118]"
+        "name": "[20118] Stop discharging voltage"
       },
       "setting_20119": {
-        "name": "Stop charging voltage [20119]"
+        "name": "[20119] Stop charging voltage"
       },
       "setting_20125": {
-        "name": "Max grid charging current (DC) [20125]"
+        "name": "[20125] Max grid charging current (DC)"
       },
       "setting_20127": {
-        "name": "Battery low voltage [20127]"
+        "name": "[20127] Battery low voltage"
       },
       "setting_20128": {
-        "name": "Battery high voltage [20128]"
+        "name": "[20128] Battery high voltage"
       },
       "setting_20132": {
-        "name": "Max combined charging current (DC) [20132]"
+        "name": "[20132] Max total solar charging current"
       },
       "setting_20142": {
-        "name": "System settings mask [20142]"
+        "name": "[20142] System settings mask"
       },
       "setting_20143": {
-        "name": "Charging source priority [20143]"
+        "name": "[20143] Charging source priority"
       },
       "setting_20145": {
-        "name": "BMS control method [20145]"
+        "name": "[20145] BMS control method"
       },
       "setting_20146": {
-        "name": "Low DC cut-off SOC [20146]"
+        "name": "[20146] Low DC cut-off SOC"
       },
       "setting_20147": {
-        "name": "Stop discharging SOC [20147]"
+        "name": "[20147] Stop discharging SOC"
       },
       "setting_20148": {
-        "name": "Stop charging SOC [20148]"
+        "name": "[20148] Stop charging SOC"
       },
       "setting_20149": {
-        "name": "Lithium battery protocol [20149]"
+        "name": "[20149] Lithium battery protocol"
       },
       "setting_20150": {
-        "name": "Second output cut-off voltage [20150]"
+        "name": "[20150] Second output cut-off voltage"
       },
       "setting_20151": {
-        "name": "Second output cut-off SOC [20151]"
+        "name": "[20151] Second output cut-off SOC"
       },
       "setting_20142_bit0": {
-        "name": "Overload restart forbidden [20142]"
+        "name": "[20142] Overload restart forbidden"
       },
       "setting_20142_bit1": {
-        "name": "Overtemperature restart forbidden [20142]"
+        "name": "[20142] Overtemperature restart forbidden"
       },
       "setting_20142_bit2": {
-        "name": "Overload bypass forbidden [20142]"
+        "name": "[20142] Overload bypass forbidden"
       },
       "setting_20142_bit3": {
-        "name": "LCD auto paging forbidden [20142]"
+        "name": "[20142] LCD auto paging forbidden"
       },
       "setting_20142_bit4": {
-        "name": "Grid buzzer enabled [20142]"
+        "name": "[20142] Grid buzzer enabled"
       },
       "setting_20142_bit5": {
-        "name": "Buzzer forbidden [20142]"
+        "name": "[20142] Buzzer forbidden"
       },
       "setting_20142_bit6": {
-        "name": "LCD backlight always on [20142]"
+        "name": "[20142] LCD backlight always on"
       },
       "setting_20142_bit7": {
-        "name": "Fault recording forbidden [20142]"
+        "name": "[20142] Fault recording forbidden"
       },
       "setting_20142_bit8": {
-        "name": "Operation on BMS communication fault enabled [20142]"
+        "name": "[20142] Operation on BMS communication fault enabled"
       },
       "setting_20142_bit9": {
-        "name": "Dual output enabled [20142]"
+        "name": "[20142] Dual output enabled"
+      }
+    },
+    "binary_sensor": {
+      "dongle_connection": {
+        "name": "Dongle connection"
       }
     }
   },

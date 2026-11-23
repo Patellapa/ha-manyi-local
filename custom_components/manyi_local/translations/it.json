@@ -2,187 +2,192 @@
   "entity": {
     "sensor": {
       "output_voltage": {
-        "name": "Tensione inverter"
+        "name": "[25206] Tensione inverter"
       },
       "inverter_current": {
-        "name": "Corrente inverter"
+        "name": "[25210] Corrente inverter"
       },
       "load_current": {
-        "name": "Corrente carico"
+        "name": "[25212] Corrente carico"
       },
       "ac_output_power": {
-        "name": "Potenza carico"
+        "name": "[25215] Potenza carico"
       },
       "inverter_temperature": {
-        "name": "Temperatura radiatore AC inverter"
+        "name": "[25233] Temperatura radiatore AC inverter"
       },
       "mppt1_radiator_temperature": {
-        "name": "Temperatura radiatore MPPT 1"
+        "name": "[15209] Temperatura radiatore MPPT 1"
       },
       "mppt1_pv_voltage": {
-        "name": "Tensione PV MPPT 1"
+        "name": "[15205] Tensione PV MPPT 1"
       },
       "mppt1_charger_current": {
-        "name": "Corrente di carica MPPT 1"
+        "name": "[15207] Corrente di carica MPPT 1"
       },
       "mppt1_charger_power": {
-        "name": "Potenza letta MPPT 1"
+        "name": "[15208] Potenza letta MPPT 1"
       },
       "mppt1_estimated_output_power": {
-        "name": "Stima uscita caricatore MPPT 1"
+        "name": "[15206 × 15207] Stima uscita caricatore MPPT 1"
       },
       "mppt2_radiator_temperature": {
-        "name": "Temperatura radiatore MPPT 2"
+        "name": "[16209] Temperatura radiatore MPPT 2"
       },
       "mppt2_pv_voltage": {
-        "name": "Tensione PV MPPT 2"
+        "name": "[16205] Tensione PV MPPT 2"
       },
       "mppt2_charger_current": {
-        "name": "Corrente di carica MPPT 2"
+        "name": "[16207] Corrente di carica MPPT 2"
       },
       "mppt2_charger_power": {
-        "name": "Potenza letta MPPT 2"
+        "name": "[16208] Potenza letta MPPT 2"
       },
       "mppt2_estimated_output_power": {
-        "name": "Stima uscita caricatore MPPT 2"
+        "name": "[16206 × 16207] Stima uscita caricatore MPPT 2"
       },
       "bms_battery_voltage": {
-        "name": "Tensione batteria da BMS"
+        "name": "[109] Tensione batteria da BMS"
       },
       "bms_battery_current": {
-        "name": "Corrente batteria da BMS"
+        "name": "[110] Corrente batteria da BMS"
       },
       "inverter_battery_power": {
-        "name": "Potenza batteria da inverter"
+        "name": "[25273] Potenza batteria da inverter"
       },
       "inverter_battery_voltage": {
-        "name": "Tensione batteria da inverter"
+        "name": "[25205] Tensione batteria da inverter"
       },
       "inverter_battery_current": {
-        "name": "Corrente batteria da inverter"
+        "name": "[25274] Corrente batteria da inverter"
       },
       "bms_soc": {
-        "name": "SOC da BMS"
+        "name": "[113] SOC da BMS"
       },
       "bms_soh": {
-        "name": "SOH da BMS"
+        "name": "[114] SOH da BMS"
       },
       "bms_calculated_power": {
-        "name": "Potenza calcolata BMS (V × A)"
+        "name": "[109 × 110] Potenza calcolata BMS (V × A)"
       },
       "setting_10101": {
-        "name": "Codice abilitazione caricatore PV [10101]"
+        "name": "[10101] Codice abilitazione caricatore PV"
       },
       "setting_10103": {
-        "name": "Tensione mantenimento Float [10103]"
+        "name": "[10103] Tensione mantenimento Float"
       },
       "setting_10104": {
-        "name": "Tensione assorbimento [10104]"
+        "name": "[10104] Tensione assorbimento"
       },
       "setting_10110": {
-        "name": "Tipo batteria [10110]"
+        "name": "[10110] Tipo batteria"
       },
       "setting_20101": {
-        "name": "Uscita off-grid abilitata [20101]"
+        "name": "[20101] Uscita off-grid abilitata"
       },
       "setting_20102": {
-        "name": "Tensione uscita impostata [20102]"
+        "name": "[20102] Tensione uscita impostata"
       },
       "setting_20103": {
-        "name": "Frequenza uscita impostata [20103]"
+        "name": "[20103] Frequenza uscita impostata"
       },
       "setting_20104": {
-        "name": "Risparmio energetico abilitato [20104]"
+        "name": "[20104] Risparmio energetico abilitato"
       },
       "setting_20108": {
-        "name": "Immissione batteria in rete abilitata [20108]"
+        "name": "[20108] Immissione batteria in rete abilitata"
       },
       "setting_20109": {
-        "name": "Priorità sorgente uscita [20109]"
+        "name": "[20109] Priorità sorgente uscita"
       },
       "setting_20111": {
-        "name": "Standard protezione rete [20111]"
+        "name": "[20111] Standard protezione rete"
       },
       "setting_20112": {
-        "name": "Priorità utilizzo solare [20112]"
+        "name": "[20112] Priorità utilizzo solare"
       },
       "setting_20114": {
-        "name": "Corrente massima inverter (AC) [20114]"
+        "name": "[20114] Corrente massima inverter (AC)"
       },
       "setting_20118": {
-        "name": "Tensione arresto scarica [20118]"
+        "name": "[20118] Tensione arresto scarica"
       },
       "setting_20119": {
-        "name": "Tensione arresto carica [20119]"
+        "name": "[20119] Tensione arresto carica"
       },
       "setting_20125": {
-        "name": "Corrente massima carica rete (DC) [20125]"
+        "name": "[20125] Corrente massima carica rete (DC)"
       },
       "setting_20127": {
-        "name": "Soglia tensione batteria bassa [20127]"
+        "name": "[20127] Soglia tensione batteria bassa"
       },
       "setting_20128": {
-        "name": "Soglia tensione batteria alta [20128]"
+        "name": "[20128] Soglia tensione batteria alta"
       },
       "setting_20132": {
-        "name": "Corrente massima carica combinata (DC) [20132]"
+        "name": "[20132] Corrente massima carica solare totale"
       },
       "setting_20142": {
-        "name": "Maschera impostazioni sistema [20142]"
+        "name": "[20142] Maschera impostazioni sistema"
       },
       "setting_20143": {
-        "name": "Priorità sorgente carica [20143]"
+        "name": "[20143] Priorità sorgente carica"
       },
       "setting_20145": {
-        "name": "Metodo controllo BMS [20145]"
+        "name": "[20145] Metodo controllo BMS"
       },
       "setting_20146": {
-        "name": "SOC spegnimento batteria bassa [20146]"
+        "name": "[20146] SOC spegnimento batteria bassa"
       },
       "setting_20147": {
-        "name": "SOC arresto scarica [20147]"
+        "name": "[20147] SOC arresto scarica"
       },
       "setting_20148": {
-        "name": "SOC arresto carica [20148]"
+        "name": "[20148] SOC arresto carica"
       },
       "setting_20149": {
-        "name": "Protocollo batteria litio [20149]"
+        "name": "[20149] Protocollo batteria litio"
       },
       "setting_20150": {
-        "name": "Tensione distacco seconda uscita [20150]"
+        "name": "[20150] Tensione distacco seconda uscita"
       },
       "setting_20151": {
-        "name": "SOC distacco seconda uscita [20151]"
+        "name": "[20151] SOC distacco seconda uscita"
       },
       "setting_20142_bit0": {
-        "name": "Riavvio sovraccarico disabilitato [20142]"
+        "name": "[20142] Riavvio sovraccarico disabilitato"
       },
       "setting_20142_bit1": {
-        "name": "Riavvio sovratemperatura disabilitato [20142]"
+        "name": "[20142] Riavvio sovratemperatura disabilitato"
       },
       "setting_20142_bit2": {
-        "name": "Bypass sovraccarico disabilitato [20142]"
+        "name": "[20142] Bypass sovraccarico disabilitato"
       },
       "setting_20142_bit3": {
-        "name": "Scorrimento automatico LCD disabilitato [20142]"
+        "name": "[20142] Scorrimento automatico LCD disabilitato"
       },
       "setting_20142_bit4": {
-        "name": "Cicalino rete abilitato [20142]"
+        "name": "[20142] Cicalino rete abilitato"
       },
       "setting_20142_bit5": {
-        "name": "Cicalino disabilitato [20142]"
+        "name": "[20142] Cicalino disabilitato"
       },
       "setting_20142_bit6": {
-        "name": "Retroilluminazione LCD sempre accesa [20142]"
+        "name": "[20142] Retroilluminazione LCD sempre accesa"
       },
       "setting_20142_bit7": {
-        "name": "Registrazione guasti disabilitata [20142]"
+        "name": "[20142] Registrazione guasti disabilitata"
       },
       "setting_20142_bit8": {
-        "name": "Funzionamento su errore comunicazione BMS abilitato [20142]"
+        "name": "[20142] Funzionamento su errore comunicazione BMS abilitato"
       },
       "setting_20142_bit9": {
-        "name": "Doppia uscita abilitata [20142]"
+        "name": "[20142] Doppia uscita abilitata"
+      }
+    },
+    "binary_sensor": {
+      "dongle_connection": {
+        "name": "Connessione dongle"
       }
     }
   },

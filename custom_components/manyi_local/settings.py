@@ -45,7 +45,7 @@ SETTINGS = (
     Setting(20109, "Output source priority", "Priorità sorgente uscita", labels=(
         (1, "SBU"), (2, "SUB"), (3, "UTI"), (4, "SOL"))),
     Setting(20111, "Grid protection standard", "Standard protezione rete", labels=(
-        (0, "VDE4105"), (1, "UPS"), (2, "home"), (3, "GEN"))),
+        (0, "VDE4105"), (1, "UPS"), (2, "APL"), (3, "GEN"))),
     Setting(20112, "Solar use priority", "Priorità utilizzo solare", labels=((0, "LBU"), (1, "BLU"))),
     Setting(20114, "Max inverter current (AC)", "Corrente massima inverter (AC)", "A", .1),
     Setting(20118, "Stop discharging voltage", "Tensione arresto scarica", "V", .1),
@@ -53,7 +53,7 @@ SETTINGS = (
     Setting(20125, "Max grid charging current (DC)", "Corrente massima carica rete (DC)", "A", .1),
     Setting(20127, "Battery low voltage", "Soglia tensione batteria bassa", "V", .1),
     Setting(20128, "Battery high voltage", "Soglia tensione batteria alta", "V", .1),
-    Setting(20132, "Max combined charging current (DC)", "Corrente massima carica combinata (DC)", "A", .1),
+    Setting(20132, "Max total solar charging current", "Corrente massima carica solare totale", "A", .1),
     Setting(20142, "System settings mask", "Maschera impostazioni sistema"),
     Setting(20143, "Charging source priority", "Priorità sorgente carica", labels=(
         (0, "solar_first"), (2, "solar_and_utility"), (3, "solar_only"))),
@@ -61,7 +61,7 @@ SETTINGS = (
     Setting(20146, "Low DC cut-off SOC", "SOC spegnimento batteria bassa", "%"),
     Setting(20147, "Stop discharging SOC", "SOC arresto scarica", "%"),
     Setting(20148, "Stop charging SOC", "SOC arresto carica", "%"),
-    Setting(20149, "Lithium battery protocol", "Protocollo batteria litio", labels=((0, "MUST"),)),
+    Setting(20149, "Lithium battery protocol", "Protocollo batteria litio", labels=((0, "MUST"), (8, "8"))),
     Setting(20150, "Second output cut-off voltage", "Tensione distacco seconda uscita", "V", .1),
     Setting(20151, "Second output cut-off SOC", "SOC distacco seconda uscita", "%"),
 )

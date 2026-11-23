@@ -24,6 +24,7 @@ from homeassistant.config_entries import ConfigEntry
 from .const import CONF_INVERTERS, CONF_IP, CONF_NAME, CONF_PN, DOMAIN
 from .hub import CollectorConfig, ManyiHub
 from .settings import SETTINGS
+from .registers import TELEMETRY_REGISTERS
 
 
 @dataclass(frozen=True)
@@ -188,6 +189,7 @@ async def async_setup_entry(
 class ManyiSensor(SensorEntity):
     entity_description: ManyiSensorDescription
     _attr_has_entity_name = True
+    _attr_should_poll = False
 
     def __init__(
         self,
@@ -203,6 +205,9 @@ class ManyiSensor(SensorEntity):
         suffix = f"mppt{channel}_" if channel is not None else ""
         key = description.value_key or suffix + description.key
         self._value_key = key
+        self._setting = next((item for item in SETTINGS if item.key == key), None)
+        self._registers = ((self._setting.address,) if self._setting is not None
+                           else TELEMETRY_REGISTERS.get(description.translation_key, ()))
         self._attr_unique_id = f"{config.pn}_{key}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, config.pn)},
@@ -213,25 +218,41 @@ class ManyiSensor(SensorEntity):
 
     @property
     def available(self) -> bool:
-        state = self._hub.states[self._config.ip]
-        return state["connected"] and state["values"].get(self._value_key) is not None
+        # A communication outage freezes the last measurement. Explicit missing
+        # data and sensors never read successfully remain unavailable.
+        return self.native_value is not None
 
     @property
     def native_value(self) -> int | float | str | None:
         return self._hub.states[self._config.ip]["values"].get(self._value_key)
 
     @property
-    def extra_state_attributes(self) -> dict | None:
-        setting = next((item for item in SETTINGS if item.key == self._value_key), None)
-        if setting is None:
-            return None
+    def extra_state_attributes(self) -> dict:
+        ip = self._config.ip
+        state = self._hub.states[ip]
+        updated = self._hub.value_updated[ip].get(self._value_key)
+        error = (self._hub.settings_errors[ip].get(self._setting.address)
+                 if self._setting is not None else None)
+        # A reconnect does not make cached data fresh until it is read again.
+        stale = (self.native_value is None or not state["connected"] or updated is None or bool(error)
+                 or updated < state.get("session_started", ""))
         attributes = {
-            "register": setting.address,
-            "raw_value": self._hub.settings_raw[self._config.ip].get(setting.address),
-            "verification": "compare_with_inverter_menu",
+            "dongle_connected": state["connected"],
+            "data_stale": stale,
+            "last_successful_update": updated,
         }
-        if setting.bit is not None:
-            attributes["bit"] = setting.bit
+        if len(self._registers) == 1:
+            attributes["register"] = self._registers[0]
+        elif self._registers:
+            attributes["source_registers"] = list(self._registers)
+        if self._setting is not None:
+            attributes.update(
+                raw_value=self._hub.settings_raw[ip].get(self._setting.address),
+                verification="compare_with_inverter_menu",
+                last_read_error=error,
+            )
+            if self._setting.bit is not None:
+                attributes["bit"] = self._setting.bit
         return attributes
 
     async def async_added_to_hass(self) -> None:

@@ -12,6 +12,8 @@ from homeassistant.components.sensor import SensorEntityDescription
 
 from custom_components import manyi_local
 from custom_components.manyi_local.const import DOMAIN
+from custom_components.manyi_local.binary_sensor import ManyiConnectionSensor
+from test_telemetry import make_hub
 from custom_components.manyi_local.sensor import (
     BATTERY_SENSORS,
     INVERTER_SENSORS,
@@ -84,3 +86,59 @@ def test_failed_platform_setup_stops_listener_and_clears_entry(monkeypatch):
         assert DOMAIN not in hass.data
 
     asyncio.run(run())
+
+
+def test_retained_sensor_state_has_explicit_freshness_and_connectivity():
+    hub = make_hub()
+    config = next(iter(hub.configs.values()))
+    ip = config.ip
+    voltage = ManyiSensor(hub, config, INVERTER_SENSORS[0])
+    connection = ManyiConnectionSensor(hub, config)
+    assert not voltage.available
+    assert not connection.is_on
+    hub.states[ip]['connected'] = True
+    hub._publish_values(ip, {'inverter_output_voltage': 230})
+    timestamp = hub.value_updated[ip]['inverter_output_voltage']
+    assert voltage.available
+    assert voltage.extra_state_attributes['register'] == 25206
+    assert not voltage.extra_state_attributes['data_stale']
+    assert connection.is_on
+    hub.states[ip]['connected'] = False
+    assert voltage.available
+    assert voltage.native_value == 230
+    assert voltage.extra_state_attributes['data_stale']
+    assert voltage.extra_state_attributes['last_successful_update'] == timestamp
+    assert not connection.is_on
+    hub.states[ip]['connected'] = True
+    hub.states[ip]['session_started'] = '9999-01-01T00:00:00+00:00'
+    assert voltage.extra_state_attributes['data_stale']
+    hub.states[ip]['session_started'] = timestamp
+    hub._publish_values(ip, {'inverter_output_voltage': 231})
+    assert voltage.native_value == 231
+    assert not voltage.extra_state_attributes['data_stale']
+
+
+def test_cached_settings_keep_raw_evidence_on_read_failure():
+    hub = make_hub()
+    config = next(iter(hub.configs.values()))
+    ip = config.ip
+    description = next(item for item in SETTING_SENSORS if item.key == 'setting_20149')
+    sensor = ManyiSensor(hub, config, description)
+    assert not sensor.available
+    hub.settings_raw[ip][20149] = 8
+    hub.value_updated[ip]['setting_20149'] = '2026-11-23T12:00:00+00:00'
+    hub._merge_settings(ip, hub.states[ip]['values'])
+    hub.states[ip]['connected'] = True
+    assert sensor.native_value == '8'
+    assert not sensor.extra_state_attributes['data_stale']
+    hub.settings_errors[ip][20149] = 'TimeoutError'
+    assert sensor.available
+    assert sensor.extra_state_attributes['raw_value'] == 8
+    assert sensor.extra_state_attributes['data_stale']
+    assert sensor.extra_state_attributes['last_read_error'] == 'TimeoutError'
+    hub._publish_values(ip, {'bms_soh': 99})
+    description = next(item for item in BATTERY_SENSORS if item.key == 'bms_soh')
+    soh = ManyiSensor(hub, config, description)
+    assert soh.available
+    hub._publish_values(ip, {'bms_soh': None})
+    assert not soh.available

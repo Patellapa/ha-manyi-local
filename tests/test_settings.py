@@ -23,6 +23,8 @@ def test_catalog_and_translations():
     assert by_address[20148].decode(80) == 80
     assert by_address[20145].decode(1) == 'SOC'
     assert by_address[20145].decode(7) == 'unknown_7'
+    assert by_address[20111].decode(2) == 'APL'
+    assert by_address[20149].decode(8) == '8'
     flag = next(item for item in SETTINGS if item.bit == 8)
     assert flag.decode(256) == 'on'
     assert flag.decode(0) == 'off'
@@ -77,5 +79,39 @@ def test_timeout_does_not_retry_same_address_on_reconnection():
         await hub._read_settings(Session(), config)
         assert calls == list(SETTING_ADDRESSES[:2])
         assert hub.settings_raw[config.ip][10101] is None
+
+    asyncio.run(run())
+
+
+def test_failed_setting_refresh_retains_last_raw_value_and_timestamp():
+    async def run():
+        hub = make_hub()
+        config = next(iter(hub.configs.values()))
+
+        class Session:
+            fail = False
+
+            async def read_holding(self, address, count):
+                if self.fail:
+                    raise ModbusException(2)
+                return [540]
+
+        session = Session()
+        await hub._read_settings(session, config)
+        timestamp = hub.value_updated[config.ip]['setting_10103']
+        session.fail = True
+        hub._settings_due[config.ip] = {address: float('inf') for address in SETTING_ADDRESSES}
+        hub._settings_due[config.ip][10103] = 0
+        await hub._read_settings(session, config)
+        values = {}
+        hub._merge_settings(config.ip, values)
+        assert values['setting_10103'] == 54
+        assert hub.settings_raw[config.ip][10103] == 540
+        assert hub.value_updated[config.ip]['setting_10103'] == timestamp
+        assert hub.settings_errors[config.ip][10103] == 'modbus_read_rejected'
+        session.fail = False
+        hub._settings_due[config.ip][10103] = 0
+        await hub._read_settings(session, config)
+        assert 10103 not in hub.settings_errors[config.ip]
 
     asyncio.run(run())

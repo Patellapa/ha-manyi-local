@@ -129,18 +129,20 @@ connection problem; shutdown no longer waits for the logger to finish polling.
 All 28 configuration addresses documented in `Protocollo_Modbus_RTU_PV_PH1800.md`
 are exposed for each inverter, plus 10 decoded system flags (38 new sensors).
 They appear in Diagnostics and are enabled by default. No write operations are
-implemented. Names include the register address; attributes include `register`,
+implemented. Names begin with the register address; attributes include `register`,
 `raw_value`, `verification`, and `bit` where applicable. Unknown enum codes are
 shown as `unknown_<raw>` rather than guessed.
 
 Four single-register reads are performed after each live telemetry update,
 without crossing reserved gaps. Each address is refreshed no sooner than five
 minutes; the first complete scan takes about seven polling cycles (about two
-minutes at the default 15-second interval). Rejected reads become unavailable.
-Timeouts may cause a logger reconnection; that address is not retried for five
-minutes. Cached settings are cleared when the logger reconnects. Missing or zero
-BMS voltage also makes BMS measurements unavailable instead of publishing the
-default SOH of 100%.
+minutes at the default 15-second interval). A rejected read or timeout preserves
+any previously read setting, including its raw value and last successful read
+time; never-read settings remain unavailable. Timeouts may cause a logger
+reconnection; that address is not retried for five minutes. Cached settings are
+retained across reconnections. Missing or zero BMS voltage in a completed live
+poll still makes BMS measurements unavailable instead of publishing the default
+SOH of 100%.
 
 These are candidate PV/PH1800 mappings: compare both raw and decoded values with
 the inverter menu and SmartValue. Zero/default values do not prove support.
@@ -162,7 +164,7 @@ inactive. Unsupported values are not used to control the inverter.
 | 20104 | Power saver enabled | 0=off, 1=on |
 | 20108 | Battery feed-in enabled | 0=off, 1=on |
 | 20109 | Output source priority | 1=SBU, 2=SUB, 3=UTI, 4=SOL |
-| 20111 | Grid protection standard | 0=VDE4105, 1=UPS, 2=home, 3=GEN |
+| 20111 | Grid protection standard | 0=VDE4105, 1=UPS, 2=APL, 3=GEN |
 | 20112 | Solar use priority | 0=LBU, 1=BLU |
 | 20114 | Max inverter current (AC) | 0.1 A |
 | 20118 | Stop discharging voltage | 0.1 V |
@@ -170,14 +172,14 @@ inactive. Unsupported values are not used to control the inverter.
 | 20125 | Max grid charging current (DC) | 0.1 A |
 | 20127 | Battery low voltage | 0.1 V |
 | 20128 | Battery high voltage | 0.1 V |
-| 20132 | Max combined charging current (DC) | 0.1 A |
+| 20132 | Max total solar charging current | 0.1 A |
 | 20142 | System settings mask | 1 raw |
 | 20143 | Charging source priority | 0=solar_first, 2=solar_and_utility, 3=solar_only |
 | 20145 | BMS control method | 0=VOL, 1=SOC |
 | 20146 | Low DC cut-off SOC | 1 % |
 | 20147 | Stop discharging SOC | 1 % |
 | 20148 | Stop charging SOC | 1 % |
-| 20149 | Lithium battery protocol | 0=MUST |
+| 20149 | Lithium battery protocol | 0=MUST, 8=8 (vendor-selected protocol, manufacturer unverified) |
 | 20150 | Second output cut-off voltage | 0.1 V |
 | 20151 | Second output cut-off SOC | 1 % |
 | 20142 | Overload restart forbidden | bit 0: on / off |
@@ -190,3 +192,51 @@ inactive. Unsupported values are not used to control the inverter.
 | 20142 | Fault recording forbidden | bit 7: on / off |
 | 20142 | Operation on BMS communication fault enabled | bit 8: on / off |
 | 20142 | Dual output enabled | bit 9: on / off |
+
+
+## Retained measurements and connectivity (0.2.4)
+
+A lost dongle connection keeps the last complete live sample visible. Values are
+held in memory during this integration session, not restored from disk after
+Home Assistant restarts or the integration is reloaded. Sensors with no valid
+reading remain unavailable. An explicit missing BMS measurement is still
+invalidated; this is different from a dongle transport outage.
+
+Each inverter has a diagnostic **Dongle connection** binary sensor. Every
+measurement exposes `dongle_connected`, `data_stale`, and
+`last_successful_update` (UTC ISO timestamp). A cached value remains stale after
+reconnection until its own next successful read. Configuration sensors also
+expose `last_read_error`. A rejected refresh retains the last configuration
+value and timestamp, and marks it stale.
+
+All sensor descriptions start with `[register]`. Calculated estimates show both
+source registers, for example `[109 × 110]`. Entity unique IDs remain unchanged;
+existing entity IDs and user-defined names are not migrated. Do not remove and
+recreate the integration just to change labels.
+
+Owner checks confirmed the menu labels APL (20111), maximum solar battery
+charging current from both MPPTs of one inverter (20132), and vendor-selected
+lithium protocol 8 (20149). Protocol 8 is shown as `8`, without guessing a brand.
+The live inverter 1 probe returned SOC method 1, low SOC 10, stop discharge 20,
+stop charge 80, and protocol 8 at the original documented addresses.
+
+### SOC templates consuming power
+
+Retaining a displayed power value does not make it a current measurement.
+Energy/SOC calculations must also check `data_stale`; a numeric state or
+`has_value` alone no longer proves fresh communication. For the user's total
+battery power template, replace its `availability` with:
+
+```yaml
+availability: >
+  {% set p1 = 'sensor.inverter_1_potenza_batteria_da_inverter' %}
+  {% set p2 = 'sensor.inverter_2_potenza_batteria_da_inverter' %}
+  {{ is_number(states(p1)) and is_number(states(p2))
+     and state_attr(p1, 'data_stale') == false
+     and state_attr(p2, 'data_stale') == false }}
+```
+
+Adapt the entity IDs to the existing installation. Energy exchanged while
+communication is absent cannot be reconstructed from held power values; the
+estimate may require recalibration. This integration release does not edit the
+user's Home Assistant configuration or SOC automations.

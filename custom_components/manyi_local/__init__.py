@@ -51,7 +51,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     persistent_notification.async_dismiss(hass, f"{DOMAIN}_{entry.entry_id}_listener")
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = hub
     try:
-        await hass.config_entries.async_forward_entry_setups(entry, (Platform.SENSOR,))
+        await hass.config_entries.async_forward_entry_setups(entry, (Platform.SENSOR, Platform.BINARY_SENSOR))
     except (Exception, asyncio.CancelledError):
         await hub.async_stop()
         hass.data[DOMAIN].pop(entry.entry_id)
@@ -64,7 +64,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     from homeassistant.const import Platform
 
-    if not await hass.config_entries.async_unload_platforms(entry, (Platform.SENSOR,)):
+    if not await hass.config_entries.async_unload_platforms(entry, (Platform.SENSOR, Platform.BINARY_SENSOR)):
         return False
     hub: ManyiHub = hass.data[DOMAIN][entry.entry_id]
     await hub.async_stop()
