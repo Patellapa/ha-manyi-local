@@ -69,6 +69,120 @@
       },
       "bms_calculated_power": {
         "name": "Potenza calcolata BMS (V × A)"
+      },
+      "setting_10101": {
+        "name": "Codice abilitazione caricatore PV [10101]"
+      },
+      "setting_10103": {
+        "name": "Tensione mantenimento Float [10103]"
+      },
+      "setting_10104": {
+        "name": "Tensione assorbimento [10104]"
+      },
+      "setting_10110": {
+        "name": "Tipo batteria [10110]"
+      },
+      "setting_20101": {
+        "name": "Uscita off-grid abilitata [20101]"
+      },
+      "setting_20102": {
+        "name": "Tensione uscita impostata [20102]"
+      },
+      "setting_20103": {
+        "name": "Frequenza uscita impostata [20103]"
+      },
+      "setting_20104": {
+        "name": "Risparmio energetico abilitato [20104]"
+      },
+      "setting_20108": {
+        "name": "Immissione batteria in rete abilitata [20108]"
+      },
+      "setting_20109": {
+        "name": "Priorità sorgente uscita [20109]"
+      },
+      "setting_20111": {
+        "name": "Standard protezione rete [20111]"
+      },
+      "setting_20112": {
+        "name": "Priorità utilizzo solare [20112]"
+      },
+      "setting_20114": {
+        "name": "Corrente massima inverter (AC) [20114]"
+      },
+      "setting_20118": {
+        "name": "Tensione arresto scarica [20118]"
+      },
+      "setting_20119": {
+        "name": "Tensione arresto carica [20119]"
+      },
+      "setting_20125": {
+        "name": "Corrente massima carica rete (DC) [20125]"
+      },
+      "setting_20127": {
+        "name": "Soglia tensione batteria bassa [20127]"
+      },
+      "setting_20128": {
+        "name": "Soglia tensione batteria alta [20128]"
+      },
+      "setting_20132": {
+        "name": "Corrente massima carica combinata (DC) [20132]"
+      },
+      "setting_20142": {
+        "name": "Maschera impostazioni sistema [20142]"
+      },
+      "setting_20143": {
+        "name": "Priorità sorgente carica [20143]"
+      },
+      "setting_20145": {
+        "name": "Metodo controllo BMS [20145]"
+      },
+      "setting_20146": {
+        "name": "SOC spegnimento batteria bassa [20146]"
+      },
+      "setting_20147": {
+        "name": "SOC arresto scarica [20147]"
+      },
+      "setting_20148": {
+        "name": "SOC arresto carica [20148]"
+      },
+      "setting_20149": {
+        "name": "Protocollo batteria litio [20149]"
+      },
+      "setting_20150": {
+        "name": "Tensione distacco seconda uscita [20150]"
+      },
+      "setting_20151": {
+        "name": "SOC distacco seconda uscita [20151]"
+      },
+      "setting_20142_bit0": {
+        "name": "Riavvio sovraccarico disabilitato [20142]"
+      },
+      "setting_20142_bit1": {
+        "name": "Riavvio sovratemperatura disabilitato [20142]"
+      },
+      "setting_20142_bit2": {
+        "name": "Bypass sovraccarico disabilitato [20142]"
+      },
+      "setting_20142_bit3": {
+        "name": "Scorrimento automatico LCD disabilitato [20142]"
+      },
+      "setting_20142_bit4": {
+        "name": "Cicalino rete abilitato [20142]"
+      },
+      "setting_20142_bit5": {
+        "name": "Cicalino disabilitato [20142]"
+      },
+      "setting_20142_bit6": {
+        "name": "Retroilluminazione LCD sempre accesa [20142]"
+      },
+      "setting_20142_bit7": {
+        "name": "Registrazione guasti disabilitata [20142]"
+      },
+      "setting_20142_bit8": {
+        "name": "Funzionamento su errore comunicazione BMS abilitato [20142]"
+      },
+      "setting_20142_bit9": {
+        "name": "Doppia uscita abilitata [20142]"
       }
     }
   },

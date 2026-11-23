@@ -18,6 +18,7 @@ from .const import (
     DEFAULT_TIMEOUT_SECONDS,
 )
 from .protocol import ModbusException, ProtocolError
+from .settings import SETTINGS, SETTING_ADDRESSES
 from .transport import CollectorSession, close_writer, request_callback
 
 _LOGGER = logging.getLogger(__name__)
@@ -63,6 +64,8 @@ class ManyiHub:
         self._callback_tasks = []
         self._server = None
         self._stopping = False
+        self.settings_raw = {ip: {} for ip in self.configs}
+        self._settings_due = {ip: {} for ip in self.configs}
 
     async def async_start(self) -> None:
         self._stopping = False
@@ -159,6 +162,7 @@ class ManyiHub:
             session = CollectorSession(reader, writer, config, DEFAULT_TIMEOUT_SECONDS)
             await session.identify()
             self._sessions[ip] = session
+            self.settings_raw[ip].clear()
             self.states[ip]["connected"] = True
             self._notify(ip)
             _LOGGER.info("Connected to %s", config.name)
@@ -166,6 +170,10 @@ class ManyiHub:
             while not session.closed:
                 values = await self._read_values(session, config)
                 self.states[ip] = {"connected": True, "values": values}
+                self._merge_settings(ip, values)
+                self._notify(ip)
+                await self._read_settings(session, config)
+                self._merge_settings(ip, values)
                 self._notify(ip)
                 await asyncio.sleep(self.poll_seconds)
         except asyncio.CancelledError:
@@ -195,6 +203,35 @@ class ManyiHub:
             self._notify(ip)
             if task is not None:
                 self._connection_tasks.discard(task)
+
+    def _merge_settings(self, ip: str, values: dict) -> None:
+        raw = self.settings_raw[ip]
+        for setting in SETTINGS:
+            value = raw.get(setting.address)
+            values[setting.key] = setting.decode(value) if value is not None else None
+
+    async def _read_settings(self, session: CollectorSession, config: CollectorConfig) -> None:
+        """Read up to four individual addresses after publishing live telemetry.
+
+        Never read across undocumented gaps. Retry optional addresses no sooner
+        than five minutes, including after a timeout/reconnection.
+        """
+        ip = config.ip
+        now = asyncio.get_running_loop().time()
+        due = self._settings_due[ip]
+        addresses = sorted(SETTING_ADDRESSES, key=lambda address: due.get(address, 0))
+        for address in addresses[:4]:
+            if due.get(address, 0) > now:
+                break
+            due[address] = now + 300
+            self.settings_raw[ip][address] = None
+            try:
+                words = await self._read_words(session, config, address, 1)
+                if words is not None:
+                    self.settings_raw[ip][address] = words[0]
+            except (OSError, TimeoutError, EOFError, ProtocolError):
+                _LOGGER.debug("Optional setting %s unavailable for %s", address, config.name)
+                break
 
     async def _read_words(self, session: CollectorSession, config: CollectorConfig,
                           start: int, count: int) -> list[int] | None:
@@ -231,6 +268,11 @@ class ManyiHub:
             for channel, base in ((1, 15200), (2, 16200))
         }
         bms = await self._read_words(session, config, 109, 6)
+        # The inverter can return zero BMS telemetry with a default SOH of 100
+        # when battery communication is absent. Zero voltage is not a valid
+        # live battery measurement; do not publish that block as real data.
+        if bms is not None and bms[0] == 0:
+            bms = None
 
         values = {
             "inverter_output_voltage": _metric(core, 1, 0.1),

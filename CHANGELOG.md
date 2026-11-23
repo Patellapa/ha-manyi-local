@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.3
+
+- Expose 28 documented configuration registers and 10 system flags as read-only diagnostic sensors per inverter.
+- Include register addresses, raw values and explicit unknown enum codes for menu/SmartValue verification.
+- Stagger optional single-register reads and cache them for at least five minutes.
+- Mark zero-voltage BMS data unavailable, including the default SOH of 100%.
+
 ## 0.2.1
 
 - Fix integration removal and reload hanging while a logger remains connected.

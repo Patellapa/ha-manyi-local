@@ -122,3 +122,71 @@ Version 0.2.1 fixes a shutdown deadlock affecting removal/reload with connected
 loggers, including unresponsive loggers. Update and restart Home Assistant to
 load the fix before retrying removal. A polling timeout alone is a separate
 connection problem; shutdown no longer waits for the logger to finish polling.
+
+
+## Read-only inverter configuration
+
+All 28 configuration addresses documented in `Protocollo_Modbus_RTU_PV_PH1800.md`
+are exposed for each inverter, plus 10 decoded system flags (38 new sensors).
+They appear in Diagnostics and are enabled by default. No write operations are
+implemented. Names include the register address; attributes include `register`,
+`raw_value`, `verification`, and `bit` where applicable. Unknown enum codes are
+shown as `unknown_<raw>` rather than guessed.
+
+Four single-register reads are performed after each live telemetry update,
+without crossing reserved gaps. Each address is refreshed no sooner than five
+minutes; the first complete scan takes about seven polling cycles (about two
+minutes at the default 15-second interval). Rejected reads become unavailable.
+Timeouts may cause a logger reconnection; that address is not retried for five
+minutes. Cached settings are cleared when the logger reconnects. Missing or zero
+BMS voltage also makes BMS measurements unavailable instead of publishing the
+default SOH of 100%.
+
+These are candidate PV/PH1800 mappings: compare both raw and decoded values with
+the inverter menu and SmartValue. Zero/default values do not prove support.
+PV registers 10101/10103/10104/10110 are marked WR in the document; their read
+support must be checked on the installed firmware. Enum labels use the PV/PH
+variant, not the EP variant. System flags 4 and 5 are documented for PV1800.
+Some settings are conditional on operating mode and may remain readable while
+inactive. Unsupported values are not used to control the inverter.
+
+| Register | Configuration sensor | Scale / codes |
+| --- | --- | --- |
+| 10101 | PV charger enable code | 1 raw (codes not specified) |
+| 10103 | Float voltage | 0.1 V |
+| 10104 | Absorption voltage | 0.1 V |
+| 10110 | Battery type | 0=not_selected, 1=user_defined, 2=lithium, 3=sealed_lead, 4=AGM, 5=GEL, 6=flooded |
+| 20101 | Off-grid output enabled | 0=off, 1=on |
+| 20102 | Output voltage setting | 0.1 V |
+| 20103 | Output frequency setting | 0.01 Hz |
+| 20104 | Power saver enabled | 0=off, 1=on |
+| 20108 | Battery feed-in enabled | 0=off, 1=on |
+| 20109 | Output source priority | 1=SBU, 2=SUB, 3=UTI, 4=SOL |
+| 20111 | Grid protection standard | 0=VDE4105, 1=UPS, 2=home, 3=GEN |
+| 20112 | Solar use priority | 0=LBU, 1=BLU |
+| 20114 | Max inverter current (AC) | 0.1 A |
+| 20118 | Stop discharging voltage | 0.1 V |
+| 20119 | Stop charging voltage | 0.1 V |
+| 20125 | Max grid charging current (DC) | 0.1 A |
+| 20127 | Battery low voltage | 0.1 V |
+| 20128 | Battery high voltage | 0.1 V |
+| 20132 | Max combined charging current (DC) | 0.1 A |
+| 20142 | System settings mask | 1 raw |
+| 20143 | Charging source priority | 0=solar_first, 2=solar_and_utility, 3=solar_only |
+| 20145 | BMS control method | 0=VOL, 1=SOC |
+| 20146 | Low DC cut-off SOC | 1 % |
+| 20147 | Stop discharging SOC | 1 % |
+| 20148 | Stop charging SOC | 1 % |
+| 20149 | Lithium battery protocol | 0=MUST |
+| 20150 | Second output cut-off voltage | 0.1 V |
+| 20151 | Second output cut-off SOC | 1 % |
+| 20142 | Overload restart forbidden | bit 0: on / off |
+| 20142 | Overtemperature restart forbidden | bit 1: on / off |
+| 20142 | Overload bypass forbidden | bit 2: on / off |
+| 20142 | LCD auto paging forbidden | bit 3: on / off |
+| 20142 | Grid buzzer enabled | bit 4: on / off |
+| 20142 | Buzzer forbidden | bit 5: on / off |
+| 20142 | LCD backlight always on | bit 6: on / off |
+| 20142 | Fault recording forbidden | bit 7: on / off |
+| 20142 | Operation on BMS communication fault enabled | bit 8: on / off |
+| 20142 | Dual output enabled | bit 9: on / off |

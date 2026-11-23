@@ -69,6 +69,120 @@
       },
       "bms_calculated_power": {
         "name": "Calculated BMS power (V × A)"
+      },
+      "setting_10101": {
+        "name": "PV charger enable code [10101]"
+      },
+      "setting_10103": {
+        "name": "Float voltage [10103]"
+      },
+      "setting_10104": {
+        "name": "Absorption voltage [10104]"
+      },
+      "setting_10110": {
+        "name": "Battery type [10110]"
+      },
+      "setting_20101": {
+        "name": "Off-grid output enabled [20101]"
+      },
+      "setting_20102": {
+        "name": "Output voltage setting [20102]"
+      },
+      "setting_20103": {
+        "name": "Output frequency setting [20103]"
+      },
+      "setting_20104": {
+        "name": "Power saver enabled [20104]"
+      },
+      "setting_20108": {
+        "name": "Battery feed-in enabled [20108]"
+      },
+      "setting_20109": {
+        "name": "Output source priority [20109]"
+      },
+      "setting_20111": {
+        "name": "Grid protection standard [20111]"
+      },
+      "setting_20112": {
+        "name": "Solar use priority [20112]"
+      },
+      "setting_20114": {
+        "name": "Max inverter current (AC) [20114]"
+      },
+      "setting_20118": {
+        "name": "Stop discharging voltage [20118]"
+      },
+      "setting_20119": {
+        "name": "Stop charging voltage [20119]"
+      },
+      "setting_20125": {
+        "name": "Max grid charging current (DC) [20125]"
+      },
+      "setting_20127": {
+        "name": "Battery low voltage [20127]"
+      },
+      "setting_20128": {
+        "name": "Battery high voltage [20128]"
+      },
+      "setting_20132": {
+        "name": "Max combined charging current (DC) [20132]"
+      },
+      "setting_20142": {
+        "name": "System settings mask [20142]"
+      },
+      "setting_20143": {
+        "name": "Charging source priority [20143]"
+      },
+      "setting_20145": {
+        "name": "BMS control method [20145]"
+      },
+      "setting_20146": {
+        "name": "Low DC cut-off SOC [20146]"
+      },
+      "setting_20147": {
+        "name": "Stop discharging SOC [20147]"
+      },
+      "setting_20148": {
+        "name": "Stop charging SOC [20148]"
+      },
+      "setting_20149": {
+        "name": "Lithium battery protocol [20149]"
+      },
+      "setting_20150": {
+        "name": "Second output cut-off voltage [20150]"
+      },
+      "setting_20151": {
+        "name": "Second output cut-off SOC [20151]"
+      },
+      "setting_20142_bit0": {
+        "name": "Overload restart forbidden [20142]"
+      },
+      "setting_20142_bit1": {
+        "name": "Overtemperature restart forbidden [20142]"
+      },
+      "setting_20142_bit2": {
+        "name": "Overload bypass forbidden [20142]"
+      },
+      "setting_20142_bit3": {
+        "name": "LCD auto paging forbidden [20142]"
+      },
+      "setting_20142_bit4": {
+        "name": "Grid buzzer enabled [20142]"
+      },
+      "setting_20142_bit5": {
+        "name": "Buzzer forbidden [20142]"
+      },
+      "setting_20142_bit6": {
+        "name": "LCD backlight always on [20142]"
+      },
+      "setting_20142_bit7": {
+        "name": "Fault recording forbidden [20142]"
+      },
+      "setting_20142_bit8": {
+        "name": "Operation on BMS communication fault enabled [20142]"
+      },
+      "setting_20142_bit9": {
+        "name": "Dual output enabled [20142]"
       }
     }
   },

@@ -16,6 +16,7 @@ from custom_components.manyi_local.sensor import (
     BATTERY_SENSORS,
     INVERTER_SENSORS,
     MPPT_SENSORS,
+    SETTING_SENSORS,
     ManyiSensor,
     async_setup_entry,
 )
@@ -48,13 +49,13 @@ def test_sensor_platform_creates_entities_with_sensor_units():
         entities = []
         await async_setup_entry(hass, entry, entities.extend)
 
-        assert len(entities) == 23
-        assert len({entity.unique_id for entity in entities}) == 23
+        assert len(entities) == 23 + len(SETTING_SENSORS)
+        assert len({entity.unique_id for entity in entities}) == len(entities)
         voltage = entities[0]
         assert isinstance(voltage, ManyiSensor)
         assert voltage.native_unit_of_measurement == "V"
         assert voltage.native_value == 230
-        for description in (*INVERTER_SENSORS, *MPPT_SENSORS, *BATTERY_SENSORS):
+        for description in (*INVERTER_SENSORS, *MPPT_SENSORS, *BATTERY_SENSORS, *SETTING_SENSORS):
             assert isinstance(description, SensorEntityDescription)
 
     asyncio.run(run())

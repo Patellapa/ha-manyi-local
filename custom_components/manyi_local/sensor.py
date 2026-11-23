@@ -18,10 +18,12 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.config_entries import ConfigEntry
 
 from .const import CONF_INVERTERS, CONF_IP, CONF_NAME, CONF_PN, DOMAIN
 from .hub import CollectorConfig, ManyiHub
+from .settings import SETTINGS
 
 
 @dataclass(frozen=True)
@@ -138,6 +140,16 @@ BATTERY_SENSORS = (
     ),
 )
 
+SETTING_SENSORS = tuple(
+    ManyiSensorDescription(
+        key=setting.key,
+        translation_key=setting.key,
+        entity_category=EntityCategory.DIAGNOSTIC,
+        native_unit_of_measurement=setting.unit,
+    )
+    for setting in SETTINGS
+)
+
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
@@ -168,7 +180,7 @@ async def async_setup_entry(
             )
         entities.extend(
             ManyiSensor(hub, config, description)
-            for description in BATTERY_SENSORS
+            for description in BATTERY_SENSORS + SETTING_SENSORS
         )
     async_add_entities(entities)
 
@@ -201,11 +213,26 @@ class ManyiSensor(SensorEntity):
 
     @property
     def available(self) -> bool:
-        return self._hub.states[self._config.ip]["connected"]
+        state = self._hub.states[self._config.ip]
+        return state["connected"] and state["values"].get(self._value_key) is not None
 
     @property
-    def native_value(self) -> int | float | None:
+    def native_value(self) -> int | float | str | None:
         return self._hub.states[self._config.ip]["values"].get(self._value_key)
+
+    @property
+    def extra_state_attributes(self) -> dict | None:
+        setting = next((item for item in SETTINGS if item.key == self._value_key), None)
+        if setting is None:
+            return None
+        attributes = {
+            "register": setting.address,
+            "raw_value": self._hub.settings_raw[self._config.ip].get(setting.address),
+            "verification": "compare_with_inverter_menu",
+        }
+        if setting.bit is not None:
+            attributes["bit"] = setting.bit
+        return attributes
 
     async def async_added_to_hass(self) -> None:
         self.async_on_remove(

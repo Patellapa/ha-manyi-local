@@ -115,6 +115,40 @@ def test_unavailable_register_blocks_do_not_become_zero():
     assert values["mppt1_charger_power"] == 600
 
 
+def test_disconnected_bms_default_soh_is_not_published():
+    class DisconnectedBmsSession(FakeSession):
+        async def read_holding(self, start, count):
+            if start == 109:
+                return [0, 0, 0, 0, 0, 100]
+            return await super().read_holding(start, count)
+
+    hub = make_hub()
+    config = next(iter(hub.configs.values()))
+    values = asyncio.run(hub._read_values(DisconnectedBmsSession(), config))
+
+    for key in ("bms_battery_voltage", "bms_battery_current", "bms_soc",
+                "bms_soh", "bms_calculated_power"):
+        assert values[key] is None
+    assert values["inverter_output_voltage"] == 230
+
+
+def test_valid_bms_can_report_full_health_and_zero_soc_and_current():
+    class EmptyBatterySession(FakeSession):
+        async def read_holding(self, start, count):
+            if start == 109:
+                return [520, 0, 0, 0, 0, 100]
+            return await super().read_holding(start, count)
+
+    hub = make_hub()
+    config = next(iter(hub.configs.values()))
+    values = asyncio.run(hub._read_values(EmptyBatterySession(), config))
+
+    assert values["bms_battery_voltage"] == 52
+    assert values["bms_battery_current"] == 0
+    assert values["bms_soc"] == 0
+    assert values["bms_soh"] == 100
+
+
 def test_framed_logger_identity_and_read_round_trip():
     async def run():
         config = CollectorConfig(
